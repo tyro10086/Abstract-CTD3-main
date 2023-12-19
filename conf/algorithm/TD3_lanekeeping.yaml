@@ -1,0 +1,66 @@
+algo_name: TD3
+
+
+seed: 1024
+
+render: False 
+eval_render: True
+
+dataloader:
+  memory_capacity: 10000 
+  batch_size: 32 
+
+  
+  sample_type: "random" 
+  
+
+model:
+  observation_dim: 2
+  action_type: "continuous" 
+  action_dim: 1  
+  action_config: 
+    acceleration: 0  
+    steering: None   
+    
+  
+  hidden_dim: 128 
+  
+  
+
+  
+  policy_delay: 2
+
+  policy_noise: 0.2 
+  noise_clip: 0.2 
+
+trainer:
+  gamma: 0.95 
+
+  critic_lr: 1.0e-3 
+  actor_lr: 1.0e-4 
+
+  target_update: 2 
+  soft_tau: 1.0e-2 
+
+  learn_freq: 100 
+  
+  print_freq: 10 
+  save_freq: 100 
+  
+  
+  max_timesteps: 10000 
+  max_updates: 1 
+
+  eval_freq: 1000 
+  eval_episodes: 10 
+
+  
+  exploration_noise: 0.2 
+  noise_clip: 0.2 
+
+  
+  is_pretrained: False
+  is_finetune: False
+  resume_path: ""
+
+

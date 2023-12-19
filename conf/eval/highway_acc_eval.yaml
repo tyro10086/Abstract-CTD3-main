@@ -1,0 +1,21 @@
+dim:
+  total_dim: 9
+  state_dim: 2
+  action_dim: 1
+  reward_dim: 1
+  cost_dim: 1
+granularity:
+  state_gran: [0.04, 0.04]
+  action_gran: [0.01]
+  reward_gran: [0.01]
+  cost_gran: [0.01]
+upperbound:
+  state_upperbound: [1, 1]
+  action_upperbound: [1]
+  reward_upperbound: [2]
+  cost_upperbound: [100]
+lowerbound:
+  state_lowerbound: [-1, -1]
+  action_lowerbound: [-1]
+  reward_lowerbound: [0]
+  cost_lowerbound: [0]

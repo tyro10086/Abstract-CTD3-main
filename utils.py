@@ -70,15 +70,19 @@ def intervalize_state(state, config):
     gran = config["granularity"]["state_gran"]
     upperbound_ls = config["upperbound"]["state_upperbound"]
     lowerbound_ls = config["lowerbound"]["state_lowerbound"]
+    #   每个维度画出来多少个区间
     num = [int((upperbound_ls[i] - lowerbound_ls[i]) / gran[i] + 1) for i in range(dim)]
 
     ret = []
+    #   每个维度找到对应的区间
     for i in range(dim):
         arr = np.linspace(lowerbound_ls[i], upperbound_ls[i], num[i])
         for j in range(len(arr)):
             arr[j] = round(arr[j], math.ceil(math.log10(gran[i]) * -1))
         ind = np.searchsorted(arr, state[i], side='right')
-        ind -= 1 if ind == num[i] else ind
+        if ind == num[i]:
+            ind -= 1
+
         ret.append(arr[ind - 1])
         ret.append(arr[ind])
     return ret

@@ -2,6 +2,8 @@ import csv
 import ast
 import re
 
+import numpy as np
+
 
 class Node:
     # def __init__(self, rel_dis, rel_speed):
@@ -22,11 +24,32 @@ class Node:
 class Edge:
     def __init__(self, next_node, action, reward, done, cost, prob):
         self.next_node = next_node
-        self.action = action
-        self.reward = reward
+        self.actions = action
+        self.rewards = reward
         self.done = done
         self.cost = cost
         self.prob = prob
+
+class attrs:
+    def __init__(self, state, edges):
+        self.state = state
+        self.probs = []
+        self.actions = []
+        self.rewards = []
+        self.max_action = -100
+        self.min_action = 100
+        for edge in edges:
+            self.probs.append(edge.prob)
+            for act in edge.actions:
+                a = (act[0] + act[1]) / 2
+                self.actions.append(a)
+                self.min_action = min(self.min_action, a)
+                self.max_action = max(self.max_action, a)
+            for reward in edge.rewards:
+                r = (reward[0] + reward[1]) / 2
+                self.rewards.append(r)
+
+            #   终止节点actions和rewards会为空，但是不用担心，这种情况下计算距离时只有状态差异
 
 
 # 递归函数来遍历并提取 True 和 False
@@ -112,16 +135,47 @@ def generate_graph_from_csv(file_path):
             current_node.add_edge(next_node, action, reward, done, cost, prob)
     return graph
 
+#   提取graph中所有的状态 返回2darray 可以直接输入到kmeans对象中
+def generate_states_from_graph(graph):
+    s = set()
+
+    for key, value in graph.items():
+        s.add(key)
+        s.add(tuple(value.state))
+    datas = []
+    for item in s:
+        datas.append([ele for inner_tuple in item for ele in inner_tuple])
+    return np.array(datas)
+
+def reshape_graph(graph):
+    ret = {}
+    for key, value in graph.items():
+        state = value.state
+        edges = value.edges
+        ret[key] = attrs(state, edges)
+
+    return ret
+
+
 
 if __name__ == '__main__':
+    # graph = generate_graph_from_csv("./../first_phase_result.csv")
     graph = generate_graph_from_csv("./../result.csv")
+    shaped_graph = reshape_graph(graph)
     for key, value in graph.items():
         print(key)
         print(value.state)
         for edge in value.edges:
             print("Next Node:", edge.next_node)
-            print("Action:", edge.action)
-            print("Reward:", edge.reward)
+            print("Action:", edge.actions)
+            print("Reward:", edge.rewards)
             print("Done:", edge.done)
             print("Cost:", edge.cost)
             print("Probability:", edge.prob)
+    print("===========================")
+    for key, value in shaped_graph.items():
+        print(key)
+        print(value.state)
+        print(value.actions)
+        print(value.rewards)
+        print(value.probs)
